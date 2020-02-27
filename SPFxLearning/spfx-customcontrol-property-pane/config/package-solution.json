@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "spfx-customcontrol-property-pane-client-side-solution",
+    "id": "67f4d99a-4009-44da-a24c-642fafa73e90",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "isDomainIsolated": false
+  },
+  "paths": {
+    "zippedPackage": "solution/spfx-customcontrol-property-pane.sppkg"
+  }
+}
