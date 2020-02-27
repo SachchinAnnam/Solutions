@@ -1,0 +1,28 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "pn-p-list-selector-property-pane-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/pnPListSelectorPropertyPane/PnPListSelectorPropertyPaneWebPart.js",
+          "manifest": "./src/webparts/pnPListSelectorPropertyPane/PnPListSelectorPropertyPaneWebPart.manifest.json"
+        }
+      ]
+    },
+    "pn-p-controls-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/pnPControls/PnPControlsWebPart.js",
+          "manifest": "./src/webparts/pnPControls/PnPControlsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "PnPListSelectorPropertyPaneWebPartStrings": "lib/webparts/pnPListSelectorPropertyPane/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
+    "PnPControlsWebPartStrings": "lib/webparts/pnPControls/loc/{locale}.js"
+  }
+}
