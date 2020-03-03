@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "stock-info-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/stockInfo/StockInfoWebPart.js",
+          "manifest": "./src/webparts/stockInfo/StockInfoWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "StockInfoWebPartStrings": "lib/webparts/stockInfo/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}

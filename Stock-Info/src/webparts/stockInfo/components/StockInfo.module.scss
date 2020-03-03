@@ -1,6 +1,6 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
-.singleAppPartPage {
+.stockInfo {
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -71,8 +71,43 @@
       display: inline-block;
     }
   }
-}
-.controls{
-  width: 75%;
-  margin: auto;
+
+  .stock {
+    border: 1px solid;
+    border-color: $ms-color-neutralLight;
+    padding: 16px;
+    position: relative;
+
+    .stockSymbol {
+      color: $ms-color-themePrimary;
+      @include ms-font-m-plus;
+      @include ms-fontWeight-semibold;
+      margin-bottom: 12px;
+    }
+
+    .stockTrend, .stockValue {
+      @include ms-font-m-plus;
+      @include ms-fontWeight-semibold;
+      padding-right: 0.5em;
+    }
+
+    .stockInfo {
+      @include ms-font-s;
+      color: $ms-color-neutralSecondary;
+      margin-top: 4px;
+
+      span {
+        padding-right: 0.85em;
+      }
+    }
+
+    .more {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      color: $ms-color-themePrimary;
+      @include ms-font-m;
+      @include ms-fontWeight-semibold;
+    }
+  }
 }

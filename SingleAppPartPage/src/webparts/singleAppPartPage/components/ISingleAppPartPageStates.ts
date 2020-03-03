@@ -4,4 +4,5 @@ export interface ISingleAppPartPageStates{
   preferredContactMethod:IDropdownOption[];
   ticketTypes:IDropdownOption[];
   IssueStatus:IDropdownOption[];
+  Title:string;
 }

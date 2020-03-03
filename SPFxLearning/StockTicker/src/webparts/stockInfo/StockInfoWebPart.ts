@@ -48,8 +48,8 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
     var width: number = Number(this.properties.dimension.width.replace("px", "").replace("%", ""));
     var height: number = Number(this.properties.dimension.height.replace("px", "").replace("%", ""));
 
-    var html = '<img src="//chart.finance.yahoo.com/t?s=' + this.properties.stock + '&amp;lang=' + this.properties.lang + '&amp;region=' + this.properties.region + '&amp;width=' + width + '&amp;height=' + height + '" alt="" width="' + width + '" height="' + height + '">';
-
+    //var html = '<img src="//chart.finance.yahoo.com/t?s=' + this.properties.stock + '&amp;lang=' + this.properties.lang + '&amp;region=' + this.properties.region + '&amp;width=' + width + '&amp;height=' + height + '" alt="" width="' + width + '" height="' + height + '">';
+      var html = '<img src="//finance.yahoo.com/chart/MSFT" alt="" width="' + width + '" height="' + height + '">';
     this.domElement.innerHTML = html;
   }
 

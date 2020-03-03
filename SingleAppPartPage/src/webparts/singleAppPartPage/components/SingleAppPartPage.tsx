@@ -16,11 +16,13 @@ export default class SingleAppPartPage extends React.Component<ISingleAppPartPag
   constructor(props:ISingleAppPartPageProps,State:ISingleAppPartPageStates){
     super(props);
     this.state = {
+      Title:"Sample",
       TicketPriority:this.props.TicketPriority,
       preferredContactMethod:this.props.preferredContactMethod,
       ticketTypes:this.props.TicketTypes,
       IssueStatus:this.props.IssueStatus
     };
+    this.onChange.bind(this);
   }
 
   public componentDidMount():void{
@@ -36,7 +38,7 @@ export default class SingleAppPartPage extends React.Component<ISingleAppPartPag
         </div>
          <TextField
           label="Title"
-          styles={{ fieldGroup: { width: 300 } }}
+          onChange={this.onChange}
           />
           <PeoplePicker
           context={this.props.context}
@@ -55,7 +57,7 @@ export default class SingleAppPartPage extends React.Component<ISingleAppPartPag
             label="Ticket Priority"
             placeholder="Select an option"
             options={this.state.TicketPriority}
-            styles={{ dropdown: { width: 300 } }}
+
           />
           <DateTimePicker label="Due Date"
             dateConvention={DateConvention.Date}
@@ -65,20 +67,20 @@ export default class SingleAppPartPage extends React.Component<ISingleAppPartPag
             label="Ticket Priority"
             placeholder="Select an option"
             options={this.state.IssueStatus}
-            styles={{ dropdown: { width: 300 } }}
+
           />
           <Dropdown
             label="Preferred Contact Method"
             placeholder="Select an option"
             options={this.state.preferredContactMethod}
-            styles={{ dropdown: { width: 300 } }}
+
           />
           <Dropdown
             label="Ticket Type"
             placeholder="Select an option"
             options={this.state.ticketTypes}
             disabled={false}
-            styles={{ dropdown: { width: 300 } }}
+
           />
           <PeoplePicker
           context={this.props.context}
@@ -119,6 +121,5 @@ export default class SingleAppPartPage extends React.Component<ISingleAppPartPag
     alert('Clicked');
   }
 
-  private
 
 }
