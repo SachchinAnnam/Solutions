@@ -29,13 +29,18 @@ export interface IStockInfoWebPartProps {
 }
 
 
+// import { sp, StorageEntity } from "@pnp/sp";
+//import "@pnp/sp/webs";
+
 
 export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWebPartProps> {
   public async render(): Promise<void> {
 
-    //const apiKey:string = ""//await this.getApiKey();
+    //const apiKey:string = await this.getApiKey();
 
-    const apiKey:string = "E2IJ2Z352MX8G0E4";
+    
+
+    const apiKey:string = "<-Enter Your API Key->>";
     const element: React.ReactElement<IStockInfoProps > = React.createElement(
       StockInfo,
       {
@@ -80,9 +85,9 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                }),
+                // PropertyPaneTextField('description', {
+                //   label: strings.DescriptionFieldLabel
+                // }),
                 PropertyPaneToggle('demo', {
                   label: strings.DemoFieldLabel
                 }),
@@ -125,7 +130,7 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
   //   // if it is not there, load it from the tenant properties
   //   // and store its value in the session storage
   //   if (!apiKey) {
-  //     const { sp} = await import("@pnp/sp");
+  //   //  const { sp} = await import("@pnp/sp");
 
   //     const storageEntity: StorageEntity = await sp.web.getStorageEntity(apiKeyName);
   //     if (storageEntity && !storageEntity['odata.null']) {
