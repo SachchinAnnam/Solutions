@@ -27,6 +27,8 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       loading: false,
       stockInfo: null
     };
+
+    
   }
 
   public componentDidMount(): void {
@@ -99,6 +101,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
         const serviceDailyEndpoint: string =
           `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${escape(stockSymbol)}&apikey=${this.props.apiKey}`;
 
+          console.log(serviceDailyEndpoint);
         // request stock information to the REST API
         this.props.httpClient
         .get(serviceDailyEndpoint, HttpClient.configurations.v1)
@@ -225,11 +228,11 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
               <span className={styles.stockValue}>{ parseFloat(lastStockData.close.toString()).toFixed(2) } USD</span>
             </div>
             <div className={styles.stockInfo}>
-              <span>{(difference >= 0 ? '+' : '-')}{ parseFloat(difference.toString()).toFixed(2) }</span>
-              <span>({differencePercent >= 0 ? '+' : '-'}{ parseFloat(differencePercent.toString()).toFixed(2) }%)</span>
+              {/* <span>{(difference >= 0 ? '+' : '')}{ parseFloat(difference.toString()).toFixed(2) }</span> */}
+              {/* <span>({differencePercent >= 0 ? '+' : ''}{ parseFloat(differencePercent.toString()).toFixed(2) }%)</span> */}
               <span>{this.state.stockInfo.lastRefreshed.toLocaleTimeString()}</span>
             </div>
-            <a href={`https://www.msn.com/en-us/money/stockdetails/fi-126.1.${this.state.stockInfo.symbol}.NAS?symbol=${this.state.stockInfo.symbol}&form=PRFIHQ`} className={styles.more} target='_blank'><Icon iconName='NavigateExternalInline'/></a>
+            {/* <a href={`https://www.msn.com/en-us/money/stockdetails/fi-126.1.${this.state.stockInfo.symbol}.NAS?symbol=${this.state.stockInfo.symbol}&form=PRFIHQ`} className={styles.more} target='_blank'><Icon iconName='NavigateExternalInline'/></a> */}
           </div>
         );
       }

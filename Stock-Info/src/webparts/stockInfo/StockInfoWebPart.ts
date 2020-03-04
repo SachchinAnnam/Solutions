@@ -21,10 +21,6 @@ import { DisplayMode } from '@microsoft/sp-core-library';
 import * as strings from 'StockInfoWebPartStrings';
 import StockInfo from './components/StockInfo';
 import { IStockInfoProps } from './components/IStockInfoProps';
-
-import { StorageEntity, sp  } from "@pnp/sp";
-import { setup } from '@pnp/common';
-
 export interface IStockInfoWebPartProps {
   description: string;
   demo: boolean;
@@ -35,25 +31,11 @@ export interface IStockInfoWebPartProps {
 
 
 export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWebPartProps> {
-
-  public async onInit():Promise<void>{
-    return super.onInit().then(_ => {
-
-      // other init code may be present
-
-      sp.setup({
-        spfxContext: this.context
-      });
-    });
-
-
-  }
-
-
   public async render(): Promise<void> {
 
-    const apiKey:string = await this.getApiKey();
+    //const apiKey:string = ""//await this.getApiKey();
 
+    const apiKey:string = "E2IJ2Z352MX8G0E4";
     const element: React.ReactElement<IStockInfoProps > = React.createElement(
       StockInfo,
       {
@@ -87,9 +69,6 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }
-
-
-
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
@@ -136,30 +115,28 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
       this.properties.stockSymbol.length === 0);
   }
 
-  private async getApiKey(): Promise<string> {
+  // private async getApiKey(): Promise<string> {
 
-    const apiKeyName: string = "PnP-Portal-AlphaVantage-API-Key";
+  //   const apiKeyName: string = "PnP-Portal-AlphaVantage-API-Key";
 
-    // try to get the API Key from the local session storage
-    let apiKey: string = sessionStorage.getItem(apiKeyName);
+  //   // try to get the API Key from the local session storage
+  //   let apiKey: string = sessionStorage.getItem(apiKeyName);
 
-    // if it is not there, load it from the tenant properties
-    // and store its value in the session storage
-    if (!apiKey) {
-      // const { sp} = await import(
-      //   /* webpackChunkName: 'pnp-sp' */
-      //   "@pnp/sp");
+  //   // if it is not there, load it from the tenant properties
+  //   // and store its value in the session storage
+  //   if (!apiKey) {
+  //     const { sp} = await import("@pnp/sp");
 
-      const storageEntity: StorageEntity = await sp.web.getStorageEntity(apiKeyName);
-      if (storageEntity && !storageEntity['odata.null']) {
-        apiKey = storageEntity.Value;
-        console.log(apiKey);
-        sessionStorage.setItem(apiKeyName, apiKey);
-      }
-    }
+  //     const storageEntity: StorageEntity = await sp.web.getStorageEntity(apiKeyName);
+  //     if (storageEntity && !storageEntity['odata.null']) {
+  //       apiKey = storageEntity.Value;
+  //       console.log(apiKey);
+  //       sessionStorage.setItem(apiKeyName, apiKey);
+  //     }
+  //   }
 
-    // return the API Key value
-    return (apiKey);
-  }
+  //   // return the API Key value
+  //   return (apiKey);
+  // }
 
 }
