@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "css-injector-application-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/cssInjector/CssInjectorApplicationCustomizer.js",
+          "manifest": "./src/extensions/cssInjector/CssInjectorApplicationCustomizer.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "CssInjectorApplicationCustomizerStrings": "lib/extensions/cssInjector/loc/{locale}.js"
+  }
+}

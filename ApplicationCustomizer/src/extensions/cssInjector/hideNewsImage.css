@@ -1,0 +1,3 @@
+.ms-NewsPinningItemImage{display: none!important}
+.ms-NewsItem{padding: 10px;}
+.ms-NewsItem ::before{content: '';}
