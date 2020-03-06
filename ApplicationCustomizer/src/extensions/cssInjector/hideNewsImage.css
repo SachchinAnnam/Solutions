@@ -1,3 +1,8 @@
 .ms-NewsPinningItemImage{display: none!important}
 .ms-NewsItem{padding: 10px;}
-.ms-NewsItem ::before{content: '';}
+.text_76690a83::before{content: url(https://evoqua.sharepoint.com/sites/ModernInternet/SiteAssets/Icon/Drop.png);position: relative;height: 0;}
+.ms-NewsSiteTitle{position: relative;left: 25px;}
+/* .titleSubcell-76{display: none!important;}
+.siteNavRoot-86{padding-top: 30px;}
+.ms-HorizontalNavItem-link{font-size: 17px; font-weight: 500;}
+.ms-ContextualMenu-itemText{font-size: 16px;} */

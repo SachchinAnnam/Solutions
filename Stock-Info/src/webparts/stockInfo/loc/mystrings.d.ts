@@ -5,6 +5,8 @@ declare interface IStockInfoWebPartStrings {
   BasicGroupName: string;
   StockSymbolFieldLabel: string;
   AutoRefreshFieldLabel: string;
+  ListNameFieldLabel:string;
+  DisplayNameFieldLabel:string;
   DemoFieldLabel: string;
 
   // Placeholder labels and strings

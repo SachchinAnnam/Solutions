@@ -1,13 +1,13 @@
 define([], function() {
   return {
-    "PropertyPaneDescription": "Description",
     "DescriptionFieldLabel": "Description Field",
     "PropertyPaneDescription": "Stock Information",
+    "ListNameFieldLabel":"StockInfo",
     "BasicGroupName": "General Settings",
     "StockSymbolFieldLabel": "Stock Code",
     "AutoRefreshFieldLabel": "Automatic Refresh",
     "DemoFieldLabel": "Show demo values",
-
+    "DisplayNameFieldLabel":"Display Name",
     "PlaceholderIconName":"Edit",
     "PlaceholderIconText":"Configure your web part",
     "PlaceholderDescription":"Please configure the web part.",

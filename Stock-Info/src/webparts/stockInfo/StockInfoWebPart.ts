@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 
+import { HttpClient,HttpClientResponse } from "@microsoft/sp-http";
+import { IAVResults } from "./components/AlphaVantageResults";
 // import {
 //   IPropertyPaneConfiguration,
 //   PropertyPaneTextField
@@ -26,21 +28,25 @@ export interface IStockInfoWebPartProps {
   demo: boolean;
   stockSymbol: string;
   autoRefresh: boolean;
+  listName:string;
 }
 
 
 // import { sp, StorageEntity } from "@pnp/sp";
 //import "@pnp/sp/webs";
-
+const apiKey:string = "E2IJ2Z352MX8G0E4";
 
 export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWebPartProps> {
+  
+
+  public async onInit(): Promise<void> {
+    await super.onInit();
+    this.getStockInformation(this.properties.stockSymbol);
+  }
+
   public async render(): Promise<void> {
 
     //const apiKey:string = await this.getApiKey();
-
-    
-
-    const apiKey:string = "<-Enter Your API Key->>";
     const element: React.ReactElement<IStockInfoProps > = React.createElement(
       StockInfo,
       {
@@ -70,10 +76,62 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
   }
-
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }
+
+  protected getStockInformation(stockSymbol:string):void{
+    try {
+      const serviceDailyEndpoint: string =
+          `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${escape(stockSymbol)}&apikey=${apiKey}`;
+
+          this.context.httpClient.get(
+            serviceDailyEndpoint,
+            HttpClient.configurations.v1
+          ).then((response:HttpClientResponse):Promise<IAVResults>=>{
+            return response.json();
+          }).then((data:IAVResults):void=>{
+            if (!data["Error Message"] && data["Meta Data"] && data["Time Series (Daily)"]) {
+              // Insert responsse in SharePoint list.
+              this.AddLatestItemInSPList(data);
+            }
+          });
+        } catch (error) {
+      throw error;
+    }
+  }
+
+  protected AddLatestItemInSPList(results:IAVResults):void{
+    try {
+      if(results){
+
+        const body: string = JSON.stringify({  
+          'Title': `${this.properties.stockSymbol}`,
+          'StockJson':JSON.stringify(results)
+        });
+        let endPoint : string = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('StockInfo')/items`;
+        // Call API
+        this.context.httpClient.post(
+          endPoint,
+          HttpClient.configurations.v1,
+          {
+            headers: {  
+              'Accept': 'application/json;odata=nometadata',  
+              'Content-type': 'application/json;odata=nometadata',  
+              'odata-version': ''  
+            },  
+            body:body
+          }).then((response:HttpClientResponse):Promise<any>=>{
+            return response.json();
+          }).then((stockInfo:any):void=>{
+
+          });
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
@@ -93,6 +151,11 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
                 }),
                 PropertyPaneTextField('stockSymbol', {
                   label: strings.StockSymbolFieldLabel
+                }),
+                PropertyPaneTextField('listName', {
+                  label: strings.ListNameFieldLabel,
+                  value:strings.ListNameFieldLabel,
+                  disabled:false
                 }),
                 PropertyPaneCheckbox('autoRefresh', {
                   text: strings.AutoRefreshFieldLabel
