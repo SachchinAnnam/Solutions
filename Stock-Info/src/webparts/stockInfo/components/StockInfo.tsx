@@ -19,51 +19,67 @@ import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { HttpClientResponse, HttpClient } from '@microsoft/sp-http';
 import * as lodash from '@microsoft/sp-lodash-subset';
 
+const FIVE_MINUTES = 5 * 60 * 1000;
 export default class StockInfo extends React.Component<IStockInfoProps, IStockInfoState> {
 
   constructor(props:IStockInfoProps){
     super(props);
     this.state={
+      title:this.props.title,
       loading: false,
       stockInfo: null
     };
 
-    
-  }
+ }
 
   public componentDidMount(): void {
     if (!this.props.needsConfiguration) {
-      this.loadStockInformation(this.props.stockSymbol, this.props.autoRefresh, this.props.demo);
+      if(sessionStorage.getItem("lastAPITime")){
+        if(new Date().getTime() - new Date(sessionStorage.getItem("lastAPITime")).getTime() > FIVE_MINUTES){
+          this.loadStockInformation(this.props.stockSymbol, this.props.demo);
+        }
+        {
+          this.setState({
+            loading:false,
+            stockInfo:JSON.parse(sessionStorage.stockInfo)
+          });
+          return;
+        }
+      }
+      else
+      {
+        this.loadStockInformation(this.props.stockSymbol, this.props.demo);
+      }
     }
   }
-
-  // on componentWillReceiveProps refresh data
+ // on componentWillReceiveProps refresh data
   public componentWillReceiveProps(nextProps: IStockInfoProps): void {
     if (nextProps.stockSymbol || nextProps.demo) {
-      this.loadStockInformation(nextProps.stockSymbol, nextProps.autoRefresh, nextProps.demo);
+      this.loadStockInformation(nextProps.stockSymbol, nextProps.demo);
     }
   }
-
-  private loadStockInformation(stockSymbol: string, autoRefresh: boolean, demo: boolean): void {
+  private loadDemoValues(stockSymbol:string):void{
+    this.setState({
+      loading: false,
+      stockInfo: {
+        symbol: 'Contoso Electronics',
+        lastRefreshed: new Date(),
+        lastData: {
+          open: 110,
+          high: 110,
+          low: 110,
+          close: 110,
+          volume: 0
+        },
+        previousClose: 109.91
+      }
+    });
+  }
+  private loadStockInformation(stockSymbol: string, demo: boolean): void {
     if (demo) {
-      this.setState({
-        loading: false,
-        stockInfo: {
-          symbol: 'Contoso Electronics',
-          lastRefreshed: new Date(),
-          lastData: {
-            open: 110,
-            high: 110,
-            low: 110,
-            close: 110,
-            volume: 0
-          },
-          previousClose: 109.91
-        }
-      });
-      return;
+       this.loadDemoValues(stockSymbol);
+       return;
     }
-
     // double-check to have the API Key
     if (!this.props.apiKey) {
 
@@ -147,7 +163,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
 
             // get the last data series from the AV service
             const lastAVDataSeries: IAVResultsSeries = timeSeries[0];
-
+            // get yesterday date and time
             // build the state variable to render the stock information
             const stockInfo: IStockInfoData = {
               symbol: data["Meta Data"]["2. Symbol"],
@@ -161,12 +177,14 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
               },
               previousClose: closeValue
             };
-
+            sessionStorage.setItem("lastAPITime", new Date().toISOString());
+            sessionStorage.setItem("stockInfo",JSON.stringify(stockInfo));
             // set the state with the new stock information and stop the Spinner
             this.setState({
               loading: false,
               stockInfo: stockInfo
             });
+
           } else {
             // if we don't have data in the response, stop the Spinner and show previous data
             this.setState({
@@ -191,13 +209,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
           // and show the error
           this.props.errorHandler(error);
         });
-
-      // handle autoRefresh logic
-      if (!demo && autoRefresh) {
-        // if autoRefresh is enabled, refresh data every 60sec
-        setTimeout(() => { this.loadStockInformation(stockSymbol, autoRefresh, demo); }, 60000);
-      }
-    }
+     }
   }
   public render(): React.ReactElement<IStockInfoProps> {
 
@@ -216,7 +228,8 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
         const differencePercent: number = (difference / previousClose) * 100;
         contents = (
           <div className={styles.stock}>
-            <div className={styles.stockSymbol}>{this.state.stockInfo.symbol}</div>
+            {/* <div className={styles.stockSymbol}>{this.state.stockInfo.symbol}</div> */}
+            <div className={styles.stockSymbol}>{this.props.title}</div>
             <div>
               <span className={styles.stockTrend}>
                 { lastStockData.close > previousClose ?
@@ -230,30 +243,15 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
             <div className={styles.stockInfo}>
               {/* <span>{(difference >= 0 ? '+' : '')}{ parseFloat(difference.toString()).toFixed(2) }</span> */}
               {/* <span>({differencePercent >= 0 ? '+' : ''}{ parseFloat(differencePercent.toString()).toFixed(2) }%)</span> */}
-              <span>{this.state.stockInfo.lastRefreshed.toLocaleTimeString()}</span>
+              {/* <span>{this.state.stockInfo.lastRefreshed.toLocaleTimeString()}</span> */}
+              <span>{new Date(sessionStorage.lastAPITime).toLocaleTimeString()}</span>
+
             </div>
             {/* <a href={`https://www.msn.com/en-us/money/stockdetails/fi-126.1.${this.state.stockInfo.symbol}.NAS?symbol=${this.state.stockInfo.symbol}&form=PRFIHQ`} className={styles.more} target='_blank'><Icon iconName='NavigateExternalInline'/></a> */}
           </div>
         );
       }
     }
-
-    // return (
-    //   <div className={ styles.stockInfo }>
-    //     <div className={ styles.container }>
-    //       <div className={ styles.row }>
-    //         <div className={ styles.column }>
-    //           <span className={ styles.title }>Welcome to SharePoint!</span>
-    //           <p className={ styles.subTitle }>Customize SharePoint experiences using Web Parts.</p>
-    //           <p className={ styles.description }>{escape(this.props.description)}</p>
-    //           <a href="https://aka.ms/spfx" className={ styles.button }>
-    //             <span className={ styles.label }>Learn more</span>
-    //           </a>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // );
     return (
       <div className={styles.stockInfo}>
         {this.props.needsConfiguration &&
