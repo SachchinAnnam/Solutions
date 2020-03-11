@@ -19,7 +19,7 @@ import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { HttpClientResponse, HttpClient } from '@microsoft/sp-http';
 import * as lodash from '@microsoft/sp-lodash-subset';
 
-const FIVE_MINUTES = 5 * 60 * 1000;
+const FIVE_MINUTES = 10 * 60 * 1000;
 export default class StockInfo extends React.Component<IStockInfoProps, IStockInfoState> {
 
   constructor(props:IStockInfoProps){
