@@ -34,31 +34,10 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
 
   public componentDidMount(): void {
     this.getExistingValuesFromSPList();
-    // if (!this.props.needsConfiguration) {
-    //   if(sessionStorage.getItem("lastAPITime")){
-    //     if(new Date().getTime() - new Date(sessionStorage.getItem("lastAPITime")).getTime() > FIVE_MINUTES){
-    //       this.loadStockInformation(this.props.stockSymbol, this.props.demo);
-    //     }
-    //     {
-    //       this.setState({
-    //         loading:false,
-    //         stockInfo:JSON.parse(sessionStorage.stockInfo)
-    //       });
-    //       return;
-    //     }
-    //   }
-    //   else
-    //   {
-    //     this.loadStockInformation(this.props.stockSymbol, this.props.demo);
-    //   }
-    // }
   }
- // on componentWillReceiveProps refresh data
+ 
   public componentWillReceiveProps(nextProps: IStockInfoProps): void {
     this.getExistingValuesFromSPList();
-    // if (nextProps.stockSymbol || nextProps.demo) {
-    //   this.loadStockInformation(nextProps.stockSymbol, nextProps.demo);
-    // }
   }
   private loadDemoValues(stockSymbol:string):void{
     this.setState({
@@ -79,7 +58,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
   }
 
   protected getItemEndPoint():string{
-    let endPoint :string = `${this.props.siteURL}/_api/web/lists/getbytitle('StockInfo')/items?$select=*&$top=1`;
+    let endPoint :string = `${this.props.siteURL}/_api/web/lists/getbytitle('StockInfo')/items?$select=*&$top=1&$orderby=Created desc`;
     return endPoint;
  }
 
@@ -94,7 +73,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
         return response.json();
       }).then((response:{value:any}):void=>{
          sessionStorage.setItem("newStockValues",response.value[0].StockJson);
-         this.loadStockInformation("AQUA",false,JSON.parse(response.value[0].StockJson));
+         this.loadStockInformation("AQUA",false,JSON.parse(response.value[0].StockJson),JSON.parse(response.value[0].TIME_SERIES_INTRADAY));
       },(error:any):void=>{
 
       });
@@ -103,9 +82,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
 
     }
   }
-
-
-  private loadStockInformation(stockSymbol: string, demo: boolean,dataNew:IAVResults): void {
+  private loadStockInformation(stockSymbol: string, demo: boolean,TIME_SERIES_DAY:IAVResults,TIME_SERIES_INTRADAY:IAVResults): void {
     if (demo) {
        this.loadDemoValues(stockSymbol);
        return;
@@ -144,113 +121,61 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       // and store its value in the session storage
       if (!closeValue) {
 
-        if (!dataNew["Error Message"] && dataNew["Meta Data"] && dataNew["Time Series (Daily)"]) {
+         if (!TIME_SERIES_DAY["Error Message"] && TIME_SERIES_DAY["Meta Data"] && TIME_SERIES_DAY["Time Series (Daily)"]) {
 
-          // get yesterday date and time
-          const yesterdayData: IAVResultsSeries = dataNew["Time Series (5min)"][dataNew["Meta Data"]["3. Last Refreshed"]];
-          closeValue = yesterdayData["4. close"];
-
-          if (closeValue > 0) {
-            sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
-          }
-        }
-
-        // const serviceDailyEndpoint: string =
-        //   `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${escape(stockSymbol)}&apikey=${this.props.apiKey}`;
-
-        //   console.log(serviceDailyEndpoint);
-        // // request stock information to the REST API
-        // this.props.httpClient
-        // .get(serviceDailyEndpoint, HttpClient.configurations.v1)
-        // .then((response: HttpClientResponse): Promise<IAVResults> => {
-        //   return response.json();
-        // })
-        // .then((data: IAVResults): void => {
-
-        //   // if there are no errors and we have data
-        //   if (!data["Error Message"] && data["Meta Data"] && data["Time Series (Daily)"]) {
-
-        //     // get yesterday date and time
-        //     const yesterdayData: IAVResultsSeries = data["Time Series (Daily)"][lastDayName];
-        //     closeValue = yesterdayData["4. close"];
-
-        //     if (closeValue > 0) {
-        //       sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
-        //     }
-        //   }
-        // });
-      }
-
-      const serviceIntradayEndpoint: string =
-       `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${escape(stockSymbol)}&interval=1min&apikey=${this.props.apiKey}`;
-
-      // request stock information to the REST API
-      this.props.httpClient
-        .get(serviceIntradayEndpoint, HttpClient.configurations.v1)
-        .then((response: HttpClientResponse): Promise<IAVResults> => {
-          return response.json();
-        })
-        .then((data: IAVResults): void => {
-
-          // if there are no errors and we have data
-          if (!data["Error Message"] && data["Meta Data"] && data["Time Series (1min)"]) {
-
-            const timeSeries: Array<IAVResultsSeries> = new Array<IAVResultsSeries>();
-
-            // parse response to retrieve the quotes
-            lodash.forIn(data["Time Series (1min)"], (value: IAVResultsSeries, key: string) => {
-              timeSeries.push(value);
-            });
-
-            // get the last data series from the AV service
-            const lastAVDataSeries: IAVResultsSeries = timeSeries[0];
             // get yesterday date and time
-            // build the state variable to render the stock information
-            const stockInfo: IStockInfoData = {
-              symbol: data["Meta Data"]["2. Symbol"],
-              lastRefreshed: now,
-              lastData: {
-                open: lastAVDataSeries["1. open"],
-                high: lastAVDataSeries["2. high"],
-                low: lastAVDataSeries["3. low"],
-                close: lastAVDataSeries["4. close"],
-                volume: lastAVDataSeries["5. volume"]
-              },
-              previousClose: closeValue
-            };
-            sessionStorage.setItem("lastAPITime", new Date().toISOString());
-            sessionStorage.setItem("stockInfo",JSON.stringify(stockInfo));
-            // set the state with the new stock information and stop the Spinner
-            this.setState({
-              loading: false,
-              stockInfo: stockInfo
-            });
+            const yesterdayData: IAVResultsSeries = TIME_SERIES_DAY["Time Series (Daily)"][lastDayName];
+            closeValue = yesterdayData["4. close"];
 
-          } else {
-            // if we don't have data in the response, stop the Spinner and show previous data
-            this.setState({
-              loading: false
-            });
-            // and show a specific error
-            this.props.errorHandler(`${strings.NoDataForStockSymbol}${escape(stockSymbol)}`);
+            if (closeValue > 0) {
+              sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
+            }
           }
-        }, (error: any): void => {
-          // in case of any other generic error, stop the Spinner and show previous data
-          this.setState({
-            loading: false
-          });
-          // and show the error
-          this.props.errorHandler(error);
-        })
-        .catch((error: any): void => {
-          // in case of any other error, stop the Spinner and show previous data
-          this.setState({
-            loading: false
-          });
-          // and show the error
-          this.props.errorHandler(error);
+       }
+
+
+      if (!TIME_SERIES_INTRADAY["Error Message"] && TIME_SERIES_INTRADAY["Meta Data"] && TIME_SERIES_INTRADAY["Time Series (1min)"]) {
+
+        const timeSeries: Array<IAVResultsSeries> = new Array<IAVResultsSeries>();
+
+        // parse response to retrieve the quotes
+        lodash.forIn(TIME_SERIES_INTRADAY["Time Series (1min)"], (value: IAVResultsSeries, key: string) => {
+          timeSeries.push(value);
         });
-     }
+
+        // get the last data series from the AV service
+        const lastAVDataSeries: IAVResultsSeries = timeSeries[0];
+        // get yesterday date and time
+        // build the state variable to render the stock information
+        const stockInfo: IStockInfoData = {
+          symbol: TIME_SERIES_INTRADAY["Meta Data"]["2. Symbol"],
+          lastRefreshed: now,
+          lastData: {
+            open: lastAVDataSeries["1. open"],
+            high: lastAVDataSeries["2. high"],
+            low: lastAVDataSeries["3. low"],
+            close: lastAVDataSeries["4. close"],
+            volume: lastAVDataSeries["5. volume"]
+          },
+          previousClose: closeValue
+        };
+        sessionStorage.setItem("lastAPITime", new Date().toISOString());
+        sessionStorage.setItem("stockInfo",JSON.stringify(stockInfo));
+        // set the state with the new stock information and stop the Spinner
+        this.setState({
+          loading: false,
+          stockInfo: stockInfo
+        });
+
+      } else {
+        // if we don't have data in the response, stop the Spinner and show previous data
+        this.setState({
+          loading: false
+        });
+        // and show a specific error
+        this.props.errorHandler(`${strings.NoDataForStockSymbol}${escape(stockSymbol)}`);
+      }
+    }
   }
   public render(): React.ReactElement<IStockInfoProps> {
 
@@ -274,18 +199,21 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
             <div>
               <span className={styles.stockTrend}>
                 { lastStockData.close > previousClose ?
-                <Icon iconName='Up' /> :
+                <i className="ms-Icon ms-Icon--Up" aria-hidden="true"></i>:
+                // <Icon iconName='Up' className='ms-Icon ms-Icon--Mail' /> :
                 lastStockData.close < previousClose ?
-                <Icon iconName='Down' /> :
+                // <Icon iconName='Down' /> :
+                <i className="ms-Icon ms-Icon--Down" aria-hidden="true"></i>:
                 null }
               </span>
+              
               <span className={styles.stockValue}>{ parseFloat(lastStockData.close.toString()).toFixed(2) } USD</span>
             </div>
             <div className={styles.stockInfo}>
               {/* <span>{(difference >= 0 ? '+' : '')}{ parseFloat(difference.toString()).toFixed(2) }</span> */}
               {/* <span>({differencePercent >= 0 ? '+' : ''}{ parseFloat(differencePercent.toString()).toFixed(2) }%)</span> */}
-              {/* <span>{this.state.stockInfo.lastRefreshed.toLocaleTimeString()}</span> */}
-              <span>{new Date(sessionStorage.lastAPITime).toLocaleTimeString()}</span>
+              <span>{this.state.stockInfo.lastRefreshed.toLocaleTimeString()}</span>
+              {/* <span>{new Date(sessionStorage.lastAPITime).toLocaleTimeString()}</span> */}
 
             </div>
             {/* <a href={`https://www.msn.com/en-us/money/stockdetails/fi-126.1.${this.state.stockInfo.symbol}.NAS?symbol=${this.state.stockInfo.symbol}&form=PRFIHQ`} className={styles.more} target='_blank'><Icon iconName='NavigateExternalInline'/></a> */}
