@@ -7,6 +7,7 @@ export interface IStockInfoProps {
   title:string;
   demo: boolean;
   apiKey?: string;
+  siteURL:string;
   needsConfiguration: boolean;
   httpClient: HttpClient;
   configureHandler: () => void;

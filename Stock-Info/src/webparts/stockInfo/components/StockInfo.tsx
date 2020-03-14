@@ -3,7 +3,7 @@ import styles from './StockInfo.module.scss';
 import { IStockInfoProps } from './IStockInfoProps';
 import { IStockInfoState } from "./IStockInfoState";
 import { escape } from '@microsoft/sp-lodash-subset';
-
+import { HttpClientConfiguration,SPHttpClient,SPHttpClientResponse } from "@microsoft/sp-http";
 import * as strings from 'StockInfoWebPartStrings';
 
 import { IStockInfoData, IStockData } from './IStockInfoData';
@@ -33,30 +33,32 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
  }
 
   public componentDidMount(): void {
-    if (!this.props.needsConfiguration) {
-      if(sessionStorage.getItem("lastAPITime")){
-        if(new Date().getTime() - new Date(sessionStorage.getItem("lastAPITime")).getTime() > FIVE_MINUTES){
-          this.loadStockInformation(this.props.stockSymbol, this.props.demo);
-        }
-        {
-          this.setState({
-            loading:false,
-            stockInfo:JSON.parse(sessionStorage.stockInfo)
-          });
-          return;
-        }
-      }
-      else
-      {
-        this.loadStockInformation(this.props.stockSymbol, this.props.demo);
-      }
-    }
+    this.getExistingValuesFromSPList();
+    // if (!this.props.needsConfiguration) {
+    //   if(sessionStorage.getItem("lastAPITime")){
+    //     if(new Date().getTime() - new Date(sessionStorage.getItem("lastAPITime")).getTime() > FIVE_MINUTES){
+    //       this.loadStockInformation(this.props.stockSymbol, this.props.demo);
+    //     }
+    //     {
+    //       this.setState({
+    //         loading:false,
+    //         stockInfo:JSON.parse(sessionStorage.stockInfo)
+    //       });
+    //       return;
+    //     }
+    //   }
+    //   else
+    //   {
+    //     this.loadStockInformation(this.props.stockSymbol, this.props.demo);
+    //   }
+    // }
   }
  // on componentWillReceiveProps refresh data
   public componentWillReceiveProps(nextProps: IStockInfoProps): void {
-    if (nextProps.stockSymbol || nextProps.demo) {
-      this.loadStockInformation(nextProps.stockSymbol, nextProps.demo);
-    }
+    this.getExistingValuesFromSPList();
+    // if (nextProps.stockSymbol || nextProps.demo) {
+    //   this.loadStockInformation(nextProps.stockSymbol, nextProps.demo);
+    // }
   }
   private loadDemoValues(stockSymbol:string):void{
     this.setState({
@@ -75,7 +77,35 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       }
     });
   }
-  private loadStockInformation(stockSymbol: string, demo: boolean): void {
+
+  protected getItemEndPoint():string{
+    let endPoint :string = `${this.props.siteURL}/_api/web/lists/getbytitle('StockInfo')/items?$select=*&$top=1`;
+    return endPoint;
+ }
+
+  protected getExistingValuesFromSPList():void{
+    try {
+      this.props.httpClient.get(this.getItemEndPoint(), SPHttpClient.configurations.v1, {
+        headers: {
+          'Accept': 'application/json;odata=nometadata',
+          'odata-version': ''
+        }
+      }).then((response:HttpClientResponse):Promise<{value:any}>=>{
+        return response.json();
+      }).then((response:{value:any}):void=>{
+         sessionStorage.setItem("newStockValues",response.value[0].StockJson);
+         this.loadStockInformation("AQUA",false,JSON.parse(response.value[0].StockJson));
+      },(error:any):void=>{
+
+      });
+
+    } catch (error) {
+
+    }
+  }
+
+
+  private loadStockInformation(stockSymbol: string, demo: boolean,dataNew:IAVResults): void {
     if (demo) {
        this.loadDemoValues(stockSymbol);
        return;
@@ -114,30 +144,41 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       // and store its value in the session storage
       if (!closeValue) {
 
-        const serviceDailyEndpoint: string =
-          `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${escape(stockSymbol)}&apikey=${this.props.apiKey}`;
+        if (!dataNew["Error Message"] && dataNew["Meta Data"] && dataNew["Time Series (Daily)"]) {
 
-          console.log(serviceDailyEndpoint);
-        // request stock information to the REST API
-        this.props.httpClient
-        .get(serviceDailyEndpoint, HttpClient.configurations.v1)
-        .then((response: HttpClientResponse): Promise<IAVResults> => {
-          return response.json();
-        })
-        .then((data: IAVResults): void => {
+          // get yesterday date and time
+          const yesterdayData: IAVResultsSeries = dataNew["Time Series (5min)"][dataNew["Meta Data"]["3. Last Refreshed"]];
+          closeValue = yesterdayData["4. close"];
 
-          // if there are no errors and we have data
-          if (!data["Error Message"] && data["Meta Data"] && data["Time Series (Daily)"]) {
-
-            // get yesterday date and time
-            const yesterdayData: IAVResultsSeries = data["Time Series (Daily)"][lastDayName];
-            closeValue = yesterdayData["4. close"];
-
-            if (closeValue > 0) {
-              sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
-            }
+          if (closeValue > 0) {
+            sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
           }
-        });
+        }
+
+        // const serviceDailyEndpoint: string =
+        //   `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${escape(stockSymbol)}&apikey=${this.props.apiKey}`;
+
+        //   console.log(serviceDailyEndpoint);
+        // // request stock information to the REST API
+        // this.props.httpClient
+        // .get(serviceDailyEndpoint, HttpClient.configurations.v1)
+        // .then((response: HttpClientResponse): Promise<IAVResults> => {
+        //   return response.json();
+        // })
+        // .then((data: IAVResults): void => {
+
+        //   // if there are no errors and we have data
+        //   if (!data["Error Message"] && data["Meta Data"] && data["Time Series (Daily)"]) {
+
+        //     // get yesterday date and time
+        //     const yesterdayData: IAVResultsSeries = data["Time Series (Daily)"][lastDayName];
+        //     closeValue = yesterdayData["4. close"];
+
+        //     if (closeValue > 0) {
+        //       sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
+        //     }
+        //   }
+        // });
       }
 
       const serviceIntradayEndpoint: string =

@@ -34,7 +34,7 @@ export interface IStockInfoWebPartProps {
 
 // import { sp, StorageEntity } from "@pnp/sp";
 //import "@pnp/sp/webs";
-const apiKey:string = "<!--API KEY-->";
+const apiKey:string = "E2IJ2Z352MX8G0E4";
 
 let stockResults : IAVResults = null;
 
@@ -56,6 +56,7 @@ export default class StockInfoWebPart extends BaseClientSideWebPart<IStockInfoWe
         stockSymbol: this.properties.stockSymbol,
         title:this.properties.stockDisplayName,
         apiKey: apiKey,
+        siteURL:this.context.pageContext.site.absoluteUrl,
         needsConfiguration: this.needsConfiguration(),
         httpClient: this.context.httpClient,
         configureHandler: () => {
