@@ -35,7 +35,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
   public componentDidMount(): void {
     this.getExistingValuesFromSPList();
   }
- 
+
   public componentWillReceiveProps(nextProps: IStockInfoProps): void {
     this.getExistingValuesFromSPList();
   }
@@ -73,7 +73,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
         return response.json();
       }).then((response:{value:any}):void=>{
          sessionStorage.setItem("newStockValues",response.value[0].StockJson);
-         this.loadStockInformation("AQUA",false,JSON.parse(response.value[0].StockJson),JSON.parse(response.value[0].TIME_SERIES_INTRADAY));
+         this.loadStockInformation("AQUA",JSON.parse(response.value[0].StockJson),JSON.parse(response.value[0].TIME_SERIES_INTRADAY),response.value[0]);
       },(error:any):void=>{
 
       });
@@ -82,56 +82,45 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
 
     }
   }
-  private loadStockInformation(stockSymbol: string, demo: boolean,TIME_SERIES_DAY:IAVResults,TIME_SERIES_INTRADAY:IAVResults): void {
-    if (demo) {
-       this.loadDemoValues(stockSymbol);
-       return;
-    }
+  private loadStockInformation(stockSymbol: string,TIME_SERIES_DAY:IAVResults,TIME_SERIES_INTRADAY:IAVResults,spListItem:any): void {
+    // if (demo) {
+    //    this.loadDemoValues(stockSymbol);
+    //    return;
+    // }
     // double-check to have the API Key
-    if (!this.props.apiKey) {
-
-      // if we don't have the API Key, stop the Spinner
-      this.setState({
-        loading: false,
-        stockInfo: null
-      });
-      // and show a specific error
-      this.props.errorHandler(strings.NoAPIKeyInTenantProperties);
-    } else {
-
-      // show the Spinner control
-      this.setState({
-        loading: true
-      });
-
+    if (true) {
       // get the current date and time
-      const now: Date = new Date();
-
+     // const now: Date = new Date();
+      const now:Date = new Date(spListItem.Modified);
       // determine the date of the last work day
       const lastDay: Date = new Date(now.getTime() - (24 * ((now.getDay() === 0) ? 2 : (now.getDay() === 1) ? 3 : 1)) * 60 * 60000);
       const lastDayName: string = lastDay.toISOString().substring(0, 10);
 
       // get yesterday's closing price if it is not already in the local storage cache
-      const dailyCloseKeyName: string = `PnP-Portal-AlphaVantage-Close-${escape(stockSymbol)}-${lastDayName}`;
+      // const dailyCloseKeyName: string = `PnP-Portal-AlphaVantage-Close-${escape(stockSymbol)}-${lastDayName}`;
 
-      // try to get the close price from the local session storage
-      let closeValue: number = Number(sessionStorage.getItem(dailyCloseKeyName));
+      // // try to get the close price from the local session storage
+      // let closeValue: number = Number(sessionStorage.getItem(dailyCloseKeyName));
 
       // if it is not there, load it from the API
       // and store its value in the session storage
-      if (!closeValue) {
 
-         if (!TIME_SERIES_DAY["Error Message"] && TIME_SERIES_DAY["Meta Data"] && TIME_SERIES_DAY["Time Series (Daily)"]) {
+      // get yesterday date and time
+      const yesterdayData: IAVResultsSeries = TIME_SERIES_DAY["Time Series (Daily)"][lastDayName];
+      let closeValue:number = Number(yesterdayData["4. close"]);
+      // if (!closeValue) {
 
-            // get yesterday date and time
-            const yesterdayData: IAVResultsSeries = TIME_SERIES_DAY["Time Series (Daily)"][lastDayName];
-            closeValue = yesterdayData["4. close"];
+      //    if (!TIME_SERIES_DAY["Error Message"] && TIME_SERIES_DAY["Meta Data"] && TIME_SERIES_DAY["Time Series (Daily)"]) {
 
-            if (closeValue > 0) {
-              sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
-            }
-          }
-       }
+      //       // get yesterday date and time
+      //       const yesterdayData: IAVResultsSeries = TIME_SERIES_DAY["Time Series (Daily)"][lastDayName];
+      //       closeValue = yesterdayData["4. close"];
+
+      //       if (closeValue > 0) {
+      //         sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
+      //       }
+      //     }
+      //  }
 
 
       if (!TIME_SERIES_INTRADAY["Error Message"] && TIME_SERIES_INTRADAY["Meta Data"] && TIME_SERIES_INTRADAY["Time Series (1min)"]) {
@@ -199,14 +188,13 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
             <div>
               <span className={styles.stockTrend}>
                 { lastStockData.close > previousClose ?
-                <i className="ms-Icon ms-Icon--Up" aria-hidden="true"></i>:
-                // <Icon iconName='Up' className='ms-Icon ms-Icon--Mail' /> :
+                // <i className="ms-Icon ms-Icon--Up" aria-hidden="true"></i>:
+                <Icon iconName='Up'/> :
                 lastStockData.close < previousClose ?
-                // <Icon iconName='Down' /> :
-                <i className="ms-Icon ms-Icon--Down" aria-hidden="true"></i>:
+                <Icon iconName='Down'/> :
+                // <i className="ms-Icon ms-Icon--Down" aria-hidden="true"></i>:
                 null }
               </span>
-              
               <span className={styles.stockValue}>{ parseFloat(lastStockData.close.toString()).toFixed(2) } USD</span>
             </div>
             <div className={styles.stockInfo}>
