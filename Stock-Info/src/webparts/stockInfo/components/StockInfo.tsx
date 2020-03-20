@@ -108,21 +108,6 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       // get yesterday date and time
       const yesterdayData: IAVResultsSeries = TIME_SERIES_DAY["Time Series (Daily)"][lastDayName];
       let closeValue:number = Number(yesterdayData["4. close"]);
-      // if (!closeValue) {
-
-      //    if (!TIME_SERIES_DAY["Error Message"] && TIME_SERIES_DAY["Meta Data"] && TIME_SERIES_DAY["Time Series (Daily)"]) {
-
-      //       // get yesterday date and time
-      //       const yesterdayData: IAVResultsSeries = TIME_SERIES_DAY["Time Series (Daily)"][lastDayName];
-      //       closeValue = yesterdayData["4. close"];
-
-      //       if (closeValue > 0) {
-      //         sessionStorage.setItem(dailyCloseKeyName, closeValue.toString());
-      //       }
-      //     }
-      //  }
-
-
       if (!TIME_SERIES_INTRADAY["Error Message"] && TIME_SERIES_INTRADAY["Meta Data"] && TIME_SERIES_INTRADAY["Time Series (1min)"]) {
 
         const timeSeries: Array<IAVResultsSeries> = new Array<IAVResultsSeries>();
@@ -156,14 +141,15 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
           stockInfo: stockInfo
         });
 
-      } else {
-        // if we don't have data in the response, stop the Spinner and show previous data
-        this.setState({
-          loading: false
-        });
-        // and show a specific error
-        this.props.errorHandler(`${strings.NoDataForStockSymbol}${escape(stockSymbol)}`);
       }
+      // else {
+      //   // // if we don't have data in the response, stop the Spinner and show previous data
+      //   // this.setState({
+      //   //   loading: false
+      //   // });
+      //   // // and show a specific error
+      //   // this.props.errorHandler(`${strings.NoDataForStockSymbol}${escape(stockSymbol)}`);
+      // }
     }
   }
   public render(): React.ReactElement<IStockInfoProps> {

@@ -3,7 +3,7 @@
   "solution": {
     "name": "stock-info-client-side-solution",
     "id": "3dc19a81-85b5-41cb-98d7-d1659bcfc0df",
-    "version": "3.0.0.0",
+    "version": "4.0.0.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false
   },
