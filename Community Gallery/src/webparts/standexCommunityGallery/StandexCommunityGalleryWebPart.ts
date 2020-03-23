@@ -26,6 +26,7 @@ export default class StandexCommunityGalleryWebPart extends BaseClientSideWebPar
         libName: this.properties.libName,
         spHttpClient: this.context.spHttpClient,
         siteUrl: this.context.pageContext.web.absoluteUrl
+        
       }
     );
 
