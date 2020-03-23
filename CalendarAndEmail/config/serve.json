@@ -1,0 +1,30 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/core-build/serve.schema.json",
+    "port": 4321,
+    "https": true,
+    "serveConfigurations": {
+        "default": {
+            "pageUrl": "https://localhost:5432/workbench",
+            "customActions": {
+                "d7891677-61c9-44d7-acb1-853c2e3657bf": {
+                    "location": "ClientSideExtension.ApplicationCustomizer",
+                    "properties": {}
+                }
+            }
+        },
+        "standexExtension": {
+            "pageUrl": "https://standex.sharepoint.com/sites/Electronics_Marketing/SitePages/Home.aspx",
+            "customActions": {
+                "d7891677-61c9-44d7-acb1-853c2e3657bf": {
+                    "location": "ClientSideExtension.ApplicationCustomizer",
+                    "properties": {}
+                }
+            }
+        }
+    },
+    "initialPage": "https://localhost:5432/workbench",
+    "api": {
+        "port": 5432,
+        "entryPath": "node_modules/@microsoft/sp-webpart-workbench/lib/api/"
+    }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "community-gallery-client-side-solution",
+    "id": "2751d6e4-9fdc-4f77-9084-2089c3c1e3b7",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "isDomainIsolated": false
+  },
+  "paths": {
+    "zippedPackage": "solution/community-gallery.sppkg"
+  }
+}

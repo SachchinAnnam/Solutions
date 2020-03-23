@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "standex-community-gallery-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/standexCommunityGallery/StandexCommunityGalleryWebPart.js",
+          "manifest": "./src/webparts/standexCommunityGallery/StandexCommunityGalleryWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "StandexCommunityGalleryWebPartStrings": "lib/webparts/standexCommunityGallery/loc/{locale}.js"
+  }
+}

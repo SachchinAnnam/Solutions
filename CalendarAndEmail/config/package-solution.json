@@ -1,0 +1,54 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+    "solution": {
+        "name": "standex-extension-client-side-solution",
+        "id": "9bbe45df-9d4c-4bb5-b16a-395d7462ec6d",
+        "version": "4.0.0.0",
+        "includeClientSideAssets": true,
+        "isDomainIsolated": false,
+        "webApiPermissionRequests": [{
+                "resource": "Microsoft Graph",
+                "scope": "Sites.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Contacts.Read"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "User.Read.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Mail.Read"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Calendars.ReadWrite"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "Group.ReadWrite.All"
+            },
+            {
+                "resource": "Microsoft Graph",
+                "scope": "MailboxSettings.Read"
+            }
+        ],
+        "features": [{
+            "title": "Application Extension - Deployment of custom action.",
+            "description": "Deploys a custom action with ClientSideComponentId association",
+            "id": "df2dda33-be51-4159-b932-e821dcdd51a3",
+            "version": "1.0.0.0",
+            "assets": {
+                "elementManifests": [
+                    "elements.xml",
+                    "ClientSideInstance.xml"
+                ]
+            }
+        }]
+    },
+    "paths": {
+        "zippedPackage": "solution/standex-extension.sppkg"
+    }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "standex-extension-application-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/standexExtension/StandexExtensionApplicationCustomizer.js",
+          "manifest": "./src/extensions/standexExtension/StandexExtensionApplicationCustomizer.manifest.json"
+        }
+      ]
+    },
+    "personalemail-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/personalemail/PersonalemailWebPart.js",
+          "manifest": "./src/webparts/personalemail/PersonalemailWebPart.manifest.json"
+        }
+      ]
+    },
+    "personal-calendar-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/personalCalendar/PersonalCalendarWebPart.js",
+          "manifest": "./src/webparts/personalCalendar/PersonalCalendarWebPart.manifest.json"
+        }
+      ]
+    },
+    "stock-information-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/stockInformation/StockInformationWebPart.js",
+          "manifest": "./src/webparts/stockInformation/StockInformationWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "StandexExtensionApplicationCustomizerStrings": "lib/extensions/standexExtension/loc/{locale}.js",
+    "PersonalemailWebPartStrings": "lib/webparts/personalemail/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "PersonalCalendarWebPartStrings": "lib/webparts/personalCalendar/loc/{locale}.js",
+    "StockInformationWebPartStrings": "lib/webparts/stockInformation/loc/{locale}.js"
+  }
+}

@@ -1,0 +1,24 @@
+.app {
+    height: 0;
+}
+
+:global {
+    div[class^="clockCardWrapper_e99de8bf"] {
+        width: 250px!important;
+        height: 75px;
+        padding: 10px!important;
+    }
+    div[class^="time_e99de8bf"] {
+        font-size: 24px;
+        color: blue;
+        padding-right: 15px!important;
+    }
+    div[class^="location_e99de8bf"] {
+        font-size: 24px;
+        color: blue;
+        padding-right: 15px!important;
+    }
+    div[class^="dateAndTimezoneContainer_e99de8bf"] {
+        line-height: 10px;
+    }
+}
