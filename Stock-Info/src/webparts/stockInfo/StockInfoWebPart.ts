@@ -34,7 +34,7 @@ export interface IStockInfoWebPartProps {
 
 // import { sp, StorageEntity } from "@pnp/sp";
 //import "@pnp/sp/webs";
-const apiKey:string = "E2IJ2Z352MX8G0E4";
+const apiKey:string = "<-->";
 
 let stockResults : IAVResults = null;
 
