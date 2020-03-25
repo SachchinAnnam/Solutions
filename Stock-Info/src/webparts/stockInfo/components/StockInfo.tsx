@@ -79,7 +79,7 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       });
 
     } catch (error) {
-
+      
     }
   }
   private loadStockInformation(stockSymbol: string,TIME_SERIES_DAY:IAVResults,TIME_SERIES_INTRADAY:IAVResults,spListItem:any): void {
