@@ -29,11 +29,38 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
       loading: false,
       stockInfo: null
     };
+}
 
- }
+ protected getValues():void{
+  let siteItem:any[] = [];
+  var reactHandler = this;
+  let endPoint :string = `${this.props.siteURL}/_api/web/lists/getbytitle('StockInfo')/items?$select=*&$top=1&$orderby=Created desc`;
+
+
+  var spRequest = new XMLHttpRequest();
+  spRequest.open('GET', endPoint,true);
+  spRequest.setRequestHeader("Accept","application/json");
+  spRequest.onreadystatechange =()=>{
+      if (spRequest.readyState === 4 && spRequest.status === 200){
+          var result = JSON.parse(spRequest.responseText);
+          if(result.value.length > 0){
+            this.loadStockInformation("AQUA",JSON.parse(result.value[0].StockJson),JSON.parse(result.value[0].TIME_SERIES_INTRADAY),result.value[0]);
+          }
+          else{
+            console.log("Data is not found");
+          }
+
+      }
+      else if (spRequest.readyState === 4 && spRequest.status !== 200){
+          console.log('Error Occured while getValues()!');
+      }
+  };
+  spRequest.send();
+}
 
   public componentDidMount(): void {
-    this.getExistingValuesFromSPList();
+    //this.getExistingValuesFromSPList();
+    this.getValues();
   }
 
   public componentWillReceiveProps(nextProps: IStockInfoProps): void {
@@ -75,11 +102,11 @@ export default class StockInfo extends React.Component<IStockInfoProps, IStockIn
          sessionStorage.setItem("newStockValues",response.value[0].StockJson);
          this.loadStockInformation("AQUA",JSON.parse(response.value[0].StockJson),JSON.parse(response.value[0].TIME_SERIES_INTRADAY),response.value[0]);
       },(error:any):void=>{
-
+        console.log(error);
       });
 
     } catch (error) {
-      
+      console.log(error);
     }
   }
   private loadStockInformation(stockSymbol: string,TIME_SERIES_DAY:IAVResults,TIME_SERIES_INTRADAY:IAVResults,spListItem:any): void {
